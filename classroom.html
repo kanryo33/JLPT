@@ -417,6 +417,8 @@ a { text-decoration: none; color: inherit; }
 
 /* 选项 */
 .q-opts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; margin: 0 0 12px; }
+/* 文字词汇/文法：选项字号与题干一致 */
+.q-opts.opts-lg .opt { font-size: clamp(28px, 2.7vw, 38px); }
 .opt {
   position: relative;
   display: flex;
@@ -924,7 +926,7 @@ details.ans-trans .tr-zh { margin-top: 12px; font-size: 18px; line-height: 1.6; 
       "</div>";
 
     const optsHtml = q.options.length
-      ? '<div class="q-opts">' + q.options.map((o, i) => {
+      ? '<div class="q-opts' + (q.category === "文字词汇" || q.category === "文法" ? " opts-lg" : "") + '">' + q.options.map((o, i) => {
           const cls = ["opt"];
           if (SHOW_ANS && i === ai) cls.push("correct");
           if (SHOW_ANS && CLICKED === i && i !== ai) cls.push("wrong");
