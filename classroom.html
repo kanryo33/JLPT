@@ -639,7 +639,8 @@ details.ans-trans .tr-zh { margin-top: 12px; font-size: 18px; line-height: 1.6; 
   // 音频地址前缀：默认空（同目录 audio/ 相对路径）。
   // 部署到对象存储（如 Cloudflare R2）时改为存储域名，例如 "https://xxx.r2.dev/"，
   // 或运行时在地址栏加 ?audio_base= 覆盖，无需改代码。
-  const AUDIO_BASE = (window.AUDIO_BASE || "") + (location.search.match(/[?&]audio_base=([^&]+)/) ? decodeURIComponent(location.search.match(/[?&]audio_base=([^&]+)/)[1]) : "");
+  // 音频托管：Cloudflare Pages（免费对象托管）。可用 ?audio_base= 临时覆盖回本地或其他地址。
+  const AUDIO_BASE = (window.AUDIO_BASE || "https://jlpt-audio-6vc.pages.dev/") + (location.search.match(/[?&]audio_base=([^&]+)/) ? decodeURIComponent(location.search.match(/[?&]audio_base=([^&]+)/)[1]) : "");
   const F = { levels: new Set(), categories: new Set(), yearMonths: new Set() };
   let LIST = [];
   let IDX = 0;

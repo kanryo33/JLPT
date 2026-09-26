@@ -5,7 +5,8 @@
   "use strict";
 
   // 音频地址前缀：默认空（audio/ 相对路径）。对象存储部署时改为存储域名，或用 ?audio_base= 覆盖。
-  const AUDIO_BASE = (window.AUDIO_BASE || "") + (location.search.match(/[?&]audio_base=([^&]+)/) ? decodeURIComponent(location.search.match(/[?&]audio_base=([^&]+)/)[1]) : "");
+  // 音频托管：Cloudflare Pages。可用 ?audio_base= 临时覆盖。
+  const AUDIO_BASE = (window.AUDIO_BASE || "https://jlpt-audio-6vc.pages.dev/") + (location.search.match(/[?&]audio_base=([^&]+)/) ? decodeURIComponent(location.search.match(/[?&]audio_base=([^&]+)/)[1]) : "");
   const LS_KEY = "jlpt-bank-v1";
   const LEVEL_ORDER = ["N5", "N4", "N3", "N2", "N1"];
   const LEVEL_COLOR = {
