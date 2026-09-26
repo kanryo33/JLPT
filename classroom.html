@@ -542,6 +542,7 @@ details.ans-trans .tr-zh { margin-top: 12px; font-size: 18px; line-height: 1.6; 
 .kbd-hint { color: var(--ink-faint); font-size: 16px; }
 
 .q-stem.stem-listen { font-size: 19px; font-weight: 700; color: var(--ink-soft); }
+.q-stem.stem-reading { font-size: clamp(19px, 1.7vw, 24px); font-weight: 700; }
 .q-opts.opts-2col { grid-template-columns: repeat(2, minmax(0, 1fr)); }
 
 @media (max-width: 860px) {
@@ -920,13 +921,13 @@ details.ans-trans .tr-zh { margin-top: 12px; font-size: 18px; line-height: 1.6; 
       : "";
 
     const stemHtml =
-      '<div class="q-stem' + (isListen ? ' stem-listen' : '') + '">' +
+      '<div class="q-stem' + (isListen ? ' stem-listen' : '') + (q.category === "读解" ? ' stem-reading' : '') + '">' +
         (q.questionNumber != null ? '<span class="qn">問' + esc(q.questionNumber) + "</span>" : "") +
         rich(q.question) +
       "</div>";
 
     const optsHtml = q.options.length
-      ? '<div class="q-opts' + (q.category === "文字词汇" || q.category === "文法" ? " opts-lg" : "") + '">' + q.options.map((o, i) => {
+      ? '<div class="q-opts' + (q.category === "文字词汇" || q.category === "语法" ? " opts-lg" : "") + '">' + q.options.map((o, i) => {
           const cls = ["opt"];
           if (SHOW_ANS && i === ai) cls.push("correct");
           if (SHOW_ANS && CLICKED === i && i !== ai) cls.push("wrong");
