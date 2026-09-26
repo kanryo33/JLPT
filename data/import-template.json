@@ -1,0 +1,55 @@
+[
+  {
+    "id": "unique-id-001",
+    "level": "N5",
+    "category": "文字词汇",
+    "type": "汉字读音",
+    "question": "题干文字。需要填空时可用全角空格（　）表示空白。",
+    "options": ["选项A", "选项B", "选项C", "选项D"],
+    "answer": 0,
+    "explanation": "解析文字（可详细说明正确原因）。",
+    "tags": ["标签1", "标签2"],
+    "source": "真题",
+    "audioUrl": null,
+    "imageUrl": null,
+    "optionImages": [null, null, null, null],
+    "year": 2019
+  },
+  {
+    "id": "unique-id-002",
+    "level": "N1",
+    "category": "语法",
+    "type": "句子排序",
+    "question": "没有选项的排序/简答题示例（options 留空数组）。",
+    "options": [],
+    "answer": "日本語の 新聞 を 毎日 読みます。",
+    "explanation": "当 options 为空时，answer 使用文字作答。",
+    "tags": ["排序"],
+    "source": "模拟",
+    "audioUrl": null,
+    "imageUrl": null,
+    "optionImages": [],
+    "year": null
+  },
+  {
+    "id": "image-demo-001",
+    "level": "N3",
+    "category": "读解",
+    "type": "图片题",
+    "question": "观察图片，选择正确的描述。整道题是一张图时，题干可留空，只用 imageUrl 放题图。",
+    "options": ["图A", "图B", "图C", "图D"],
+    "answer": 0,
+    "explanation": "图片以 data URI 或 http(s) 链接放入 imageUrl / optionImages；没有则填 null。",
+    "tags": ["图片题"],
+    "source": "示例",
+    "audioUrl": null,
+    "imageUrl": "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='160'%20height='100'%3E%3Crect%20width='160'%20height='100'%20fill='%23fdecea'/%3E%3Ccircle%20cx='80'%20cy='50'%20r='30'%20fill='%23e8443b'/%3E%3C/svg%3E",
+    "optionImages": [
+      "data:image/svg+xml,%3Csvg%20xmlns='http://www.w3.org/2000/svg'%20width='120'%20height='80'%3E%3Crect%20width='120'%20height='80'%20fill='%23eaf2ff'/%3E%3Crect%20x='30'%20y='20'%20width='60'%20height='40'%20fill='%232f6df0'/%3E%3C/svg%3E",
+      null,
+      null,
+      null
+    ],
+    "year": null
+  }
+]

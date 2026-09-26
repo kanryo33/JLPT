@@ -1,0 +1,294 @@
+<!DOCTYPE html>
+<html lang="zh-CN" data-theme="light">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>JLPT 个人题库</title>
+  <link rel="stylesheet" href="styles.css?v=20260824165000" />
+</head>
+<body>
+  <!-- 顶栏 -->
+  <header class="topbar">
+    <div class="brand">
+      <img src="logo.png" alt="JLPT" class="brand-logo-img" />
+    </div>
+
+    <div class="search-wrap">
+      <svg class="search-icon" viewBox="0 0 24 24" width="18" height="18" aria-hidden="true">
+        <path fill="currentColor" d="M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 5 1.5-1.5-5-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z"/>
+      </svg>
+      <input id="search" type="search" data-i18n-placeholder="searchPlaceholder" placeholder="搜索题干 / 选项 / 解析 / 标签…" autocomplete="off" />
+      <kbd class="search-hint">/</kbd>
+    </div>
+
+    <div class="actions">
+      <div class="lang-wrap">
+        <button class="btn btn-icon" id="btn-lang" data-i18n-title="tipLang" title="切换显示语言" aria-label="切换语言">🌐</button>
+        <div class="lang-menu" id="lang-menu" hidden>
+          <button data-lang="zh">中文</button>
+          <button data-lang="en">English</button>
+          <button data-lang="ja">日本語</button>
+        </div>
+      </div>
+      <button class="btn" id="btn-paste" data-i18n="pasteImport" data-i18n-title="tipPaste" title="粘贴文本，自动识别成题目">粘贴导入</button>
+      <button class="btn" id="btn-import" data-i18n="import" data-i18n-title="tipImport" title="导入题库文件">导入</button>
+      <button class="btn" id="btn-export" data-i18n="export" data-i18n-title="tipExport" title="导出当前题库">导出</button>
+      <button class="btn btn-primary" id="btn-exam" data-i18n="exam" data-i18n-title="tipExam" title="随机组卷">随机组卷</button>
+      <a class="btn btn-classroom" href="classroom.html" title="课堂大屏演示模式（文字大，适合投影 / 大电视）">课堂演示</a>
+      <button class="btn btn-icon" id="btn-theme" data-i18n-title="tipTheme" title="切换主题（亮色 / 暗色）" aria-label="切换主题">
+        <span class="theme-icon">🌙</span>
+      </button>
+    </div>
+  </header>
+
+  <div class="layout">
+    <!-- 筛选侧栏 -->
+    <aside class="sidebar" id="sidebar">
+      <div class="filter-group">
+        <div class="filter-head">
+          <span data-i18n="level">等级</span>
+          <button class="link-btn" data-toggle-all="level" data-i18n="selectAll">全选</button>
+        </div>
+        <div class="chips" id="filter-level"></div>
+      </div>
+
+      <div class="filter-group">
+        <div class="filter-head">
+          <span data-i18n="category">分类</span>
+          <button class="link-btn" data-toggle-all="category" data-i18n="selectAll">全选</button>
+        </div>
+        <div class="chips" id="filter-category"></div>
+      </div>
+
+
+        <div class="filter-group">
+          <div class="filter-head">
+            <span data-i18n="year">考试场次</span>
+            <button class="link-btn" data-toggle-all="yearMonth" data-i18n="selectAll">全选</button>
+          </div>
+          <div class="chips" id="filter-yearMonth"></div>
+        </div>
+
+      <div class="filter-group">
+          <div class="filter-head"><span data-i18n="audio">听解音频</span></div>
+        <label class="check-row">
+          <input type="checkbox" id="filter-audio" />
+          <span data-i18n="audioOnly">仅显示含音频的题目</span>
+        </label>
+      </div>
+
+      <button class="btn btn-ghost full" id="btn-reset" data-i18n="resetFilters">重置筛选</button>
+
+      <div class="sidebar-stat" id="sidebar-stat"></div>
+    </aside>
+
+    <!-- 主内容 -->
+    <main class="content">
+      <!-- 浏览视图 -->
+      <section id="view-browse">
+        <div class="content-head">
+          <div class="result-meta" id="result-meta">—</div>
+          <div class="sort-wrap">
+            <label for="sort" data-i18n="sort">排序</label>
+            <select id="sort">
+              <option value="level-asc" data-i18n="sortLevelAsc">等级 低→高</option>
+              <option value="level-desc" data-i18n="sortLevelDesc">等级 高→低</option>
+              <option value="id-asc" data-i18n="sortId">编号</option>
+              <option value="random" data-i18n="sortRandom">随机</option>
+            </select>
+          </div>
+        </div>
+        <div class="question-list" id="question-list"></div>
+        <div class="empty" id="empty-state" hidden>
+          <div class="empty-emoji">🗂️</div>
+          <p id="empty-title" data-i18n="emptyPickTitle">请先选择筛选条件</p>
+          <span id="empty-hint" data-i18n="emptyPickHint">在左侧选择等级 / 分类 / 年份（或点各组的「全选」），即可开始刷题。</span>
+        </div>
+      </section>
+
+      <!-- 组卷视图 -->
+      <section id="view-exam" hidden>
+        <div class="exam-grid">
+          <div class="exam-panel panel">
+            <h2 data-i18n="exam">随机组卷</h2>
+            <p class="muted" data-i18n="examDesc">按条件随机抽取，生成专属试卷。</p>
+
+            <div class="field">
+              <label data-i18n="examLevel">等级（可多选）</label>
+              <div class="chips" id="exam-level"></div>
+            </div>
+
+            <div class="field">
+              <label data-i18n="examCategory">分类（可多选）</label>
+              <div class="chips" id="exam-category"></div>
+            </div>
+
+
+            <div class="field">
+              <label data-i18n="examYear">考试场次（可多选）</label>
+              <div class="chips" id="exam-yearMonth"></div>
+            </div>
+
+            <div class="field">
+              <label for="exam-count"><span data-i18n="questionCount">题目数量</span>：<b id="exam-count-val">10</b></label>
+              <input type="range" id="exam-count" min="1" max="100" value="10" />
+            </div>
+
+            <div class="field check-row">
+              <input type="checkbox" id="exam-shuffle-options" />
+              <span data-i18n="shuffleOptions">打乱选项顺序</span>
+            </div>
+
+            <div class="exam-buttons">
+              <button class="btn btn-primary full" id="btn-generate" data-i18n="generate">生成试卷</button>
+              <button class="btn full" id="btn-regen" hidden data-i18n="regenerate">重新抽取</button>
+            </div>
+          </div>
+
+          <div class="exam-result panel" id="exam-result" hidden>
+            <div class="exam-result-head">
+              <div>
+                <h2 id="exam-title">试卷</h2>
+                <p class="muted" id="exam-sub"></p>
+              </div>
+              <div class="exam-result-actions">
+                <button class="btn" id="btn-toggle-answer" data-i18n="showAnswer">显示答案</button>
+                <button class="btn" id="btn-print" data-i18n="print">打印 / 导出PDF</button>
+                <button class="btn" id="btn-export-exam" data-i18n="exportJson">导出JSON</button>
+              </div>
+            </div>
+            <div class="exam-paper" id="exam-paper"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- 导入弹窗 -->
+  <div class="modal-backdrop" id="import-modal" hidden>
+    <div class="modal">
+      <div class="modal-head">
+        <h2 data-i18n="importTitle">导入题库</h2>
+        <button class="btn btn-icon" id="btn-modal-close" aria-label="关闭">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="muted" data-i18n="importDesc">支持 JSON 文件。可从 <code>data/import-template.json</code> 复制格式。</p>
+        <div class="dropzone" id="dropzone">
+          <input type="file" id="file-input" accept=".json,application/json" hidden />
+          <p data-i18n="dropHint">点击选择文件，或拖拽到此处</p>
+          <span class="muted" data-i18n="localOnly">仅解析本地文件，不会上传任何数据</span>
+        </div>
+        <div class="import-mode">
+          <label class="radio-row"><input type="radio" name="import-mode" value="merge" checked /> <span data-i18n="mergeMode">合并到现有题库</span></label>
+          <label class="radio-row"><input type="radio" name="import-mode" value="replace" /> <span data-i18n="replaceMode">替换现有题库</span></label>
+        </div>
+        <div class="import-msg" id="import-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 粘贴导入弹窗 -->
+  <div class="modal-backdrop" id="paste-modal" hidden>
+    <div class="modal modal-lg">
+      <div class="modal-head">
+        <h2 data-i18n="pasteTitle">粘贴导入题目</h2>
+        <button class="btn btn-icon" id="btn-paste-close" aria-label="关闭">✕</button>
+      </div>
+      <div class="modal-body">
+        <p class="muted" data-i18n="pasteDesc">把整理好的题目粘贴到下方。格式：一行题干，紧接着选项（用 1,2,3,4 编号，可以每行一个，也可以写在同一行用空格隔开），空一行接下一题。可标注「答案：3」「解析：…」。识别后可逐题核对再保存。</p>
+        <div class="paste-meta">
+          <label><span data-i18n="pasteLevel">等级</span>
+            <select id="paste-level"><option>N5</option><option>N4</option><option>N3</option><option selected>N2</option><option>N1</option></select></label>
+          <label><span data-i18n="pasteCategory">分类</span>
+            <select id="paste-category"><option>文字词汇</option><option>语法</option><option>读解</option><option>听解</option></select></label>
+          <label><span data-i18n="pasteSource">来源</span>
+            <input id="paste-source" value="真题" /></label>
+        </div>
+        <textarea id="paste-text" rows="10" spellcheck="false" data-i18n-placeholder="pasteExample" placeholder="在此粘贴题目文本…"></textarea>
+        <details class="paste-sample">
+          <summary data-i18n="pasteSample">查看格式示例</summary>
+          <pre>N2
+次の言葉の読み方として正しいものを選びなさい。
+1 よむ
+2 よぶ
+3 よる
+4 よく
+答案：2
+解析：正しくは「よぶ」。
+
+日本で一番高い山は？
+1 富士山
+2 大雪山
+3 北岳
+4 奥穂高岳
+答案：1
+
+N3
+次の図を見て、正しい説明を選びなさい。
+图：grammar-01.png
+1 〜ている は継続を表す
+2 〜ている は完了を表す
+答案：1
+
+N2
+（整道题就是一张图：题干留空，识别后在预览里把图片选为「题干图片」）
+图：listening-01.png
+1 答案一
+2 答案二
+3 答案三
+4 答案四
+答案：2
+
+N3
+看图片选正确的一项（每个选项都是一张图：在预览里逐项为「选项图片」选图）
+1 选项A
+2 选项B
+3 选项C
+4 选项D
+答案：1</pre>
+        </details>
+        <div class="paste-images-block">
+          <div class="paste-images-head">
+            <span data-i18n="pasteImages">附加图片</span>
+            <span class="muted" data-i18n="pasteDragImages">点击选择或拖拽图片到此（可多选，支持 png/jpg/gif/webp）</span>
+          </div>
+          <div class="dropzone dropzone-sm" id="paste-img-drop">
+            <input type="file" id="paste-img-input" accept="image/*" multiple hidden />
+            <p data-i18n="pasteDragImages">点击选择或拖拽图片到此（可多选）</p>
+          </div>
+          <div class="paste-img-list" id="paste-img-list"></div>
+          <p class="muted paste-img-hint" data-i18n="pasteImgHint">小贴士：在文本框中用「图：文件名」可把下方附加的图片自动关联到该题。</p>
+        </div>
+        <div class="paste-actions">
+          <button class="btn btn-primary" id="btn-paste-parse" data-i18n="pasteParse">解析并预览</button>
+          <button class="btn" id="btn-paste-clear" data-i18n="pasteClear">清空</button>
+        </div>
+        <div class="paste-img-toolbar" id="paste-img-toolbar" hidden>
+          <button class="btn btn-auto-img" id="btn-auto-img" type="button" data-i18n="pasteAutoImg">按附件顺序自动填充图片</button>
+          <span class="muted" data-i18n="pasteImgFillHint">按附件顺序：先分配给空题干，再分配给空选项</span>
+        </div>
+        <div class="paste-preview" id="paste-preview" hidden></div>
+        <div class="paste-footer" id="paste-footer" hidden>
+          <span class="muted" id="paste-count"></span>
+          <button class="btn btn-primary" id="btn-paste-save" data-i18n="pasteSave">保存到题库</button>
+        </div>
+        <div class="import-msg" id="paste-msg"></div>
+      </div>
+    </div>
+  </div>
+
+  <input type="file" id="hidden-file-input" accept=".json,application/json" hidden />
+  <div class="toast" id="toast" hidden></div>
+
+  <!-- 备份提醒横幅 -->
+  <div class="backup-banner" id="backup-banner" hidden>
+    <span class="backup-icon">💾</span>
+    <span class="backup-text" id="backup-text"></span>
+    <button class="btn btn-primary btn-sm" id="backup-now"></button>
+    <button class="btn btn-ghost btn-sm" id="backup-dismiss"></button>
+  </div>
+
+  <script src="data/questions.js?v=20260824165000"></script>
+  <script src="app.js?v=20260824165000"></script>
+</body>
+</html>
